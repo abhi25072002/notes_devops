@@ -1,0 +1,155 @@
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~$ kubectl get nodes
+NAME       STATUS   ROLES           AGE   VERSION
+minikube   Ready    control-plane   16h   v1.25.2
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~$ kubectl get podes
+error: the server doesn't have a resource type "podes"
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~$ kubectl get pods
+No resources found in default namespace.
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~$ kubectl get pods -A
+NAMESPACE     NAME                               READY   STATUS    RESTARTS      AGE
+kube-system   coredns-565d847f94-2lzzb           1/1     Running   6 (71s ago)   16h
+kube-system   etcd-minikube                      1/1     Running   6 (71s ago)   16h
+kube-system   kube-apiserver-minikube            1/1     Running   7 (72s ago)   16h
+kube-system   kube-controller-manager-minikube   1/1     Running   7 (80s ago)   16h
+kube-system   kube-proxy-xbqnz                   1/1     Running   6 (80s ago)   16h
+kube-system   kube-scheduler-minikube            1/1     Running   7 (79s ago)   16h
+kube-system   storage-provisioner                1/1     Running   8 (71s ago)   16h
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~$ kubectl create deployment myapp --image=nginx
+deployment.apps/myapp created
+pod creation is not supported from commandline.
+we can create deployment using commandline.
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~/Desktop/btech/DEVOPS/kubernetes$ kubectl create -f pod.yml
+pod/myapp created
+kubectl describe pod myapp
+editi pod info using kubectl edit pod pod_name : 
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~/Desktop/btech/DEVOPS/kubernetes$ kubectl apply -f replica.yml
+replicaset.apps/myapp-ha unchanged
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~/Desktop/btech/DEVOPS/kubernetes$ kubectl create -f replica.yml
+Error from server (AlreadyExists): error when creating "replica.yml": replicasets.apps "myapp-ha" already exists
+difference between apply and create
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~/Desktop/btech/DEVOPS/kubernetes$ kubectl get replicaset
+NAME       DESIRED   CURRENT   READY   AGE
+myapp-ha   3         3         3       13m
+deleting one of pod will create another pod as replicaset contains 3 pods.
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~/Desktop/btech/DEVOPS/kubernetes$ kubectl delete replicasets.apps myapp-ha
+replicaset.apps "myapp-ha" deleted
+create replica for matchlabels : for pod with type : frontend
+what it does it grouop all pods with type-frontend ,specification is provided in spec in yml file 
+If one pod alreay exist with that type , it will create only 2 other pods if(replicas = 3) 
+apply will apply changes in .yaml file 
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~/Desktop/btech/DEVOPS/kubernetes$ kubectl get all
+NAME                           READY   STATUS    RESTARTS   AGE
+pod/myapp-ha-dd95f9c9f-8cfgq   1/1     Running   0          2m11s
+pod/myapp-ha-dd95f9c9f-h79gz   1/1     Running   0          2m11s
+pod/myapp-ha-dd95f9c9f-lm7nt   1/1     Running   0          2m11s
+
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   19h
+
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/myapp-ha   3/3     3            3           2m11s
+
+NAME                                 DESIRED   CURRENT   READY   AGE
+replicaset.apps/myapp-ha-dd95f9c9f   3         3         3       2m11s
+rollback, 
+created deployment.yaml with image:nginx:1.14
+rollout status : rolled out
+rollout history: how many versions are applied showscurrent version of image.
+<1>
+<2>
+<3>
+rollout undo deployment deployment_name:
+rolled back
+ 18->20->22 
+undo : 20
+undo : 22
+now ypu wnat to go to go to specified version ,specify it in a command , use rollout undo to version:18 
+now again undo : will give : to 22
+namespace: 
+for seperation we create namespace
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~/Desktop/btech/DEVOPS/kubernetes$ kubectl create namespace myspace
+namespace/myspace created
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~/Desktop/btech/DEVOPS/kubernetes$ kubectl get namespaces
+NAME              STATUS   AGE
+default           Active   20h
+kube-node-lease   Active   20h
+kube-public       Active   20h
+kube-system       Active   20h
+myspace           Active   2s
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~/Desktop/btech/DEVOPS/kubernetes$ kubectl get all -A
+NAMESPACE     NAME                                   READY   STATUS    RESTARTS        AGE
+kube-system   pod/coredns-565d847f94-2lzzb           1/1     Running   6 (3h59m ago)   20h
+kube-system   pod/etcd-minikube                      1/1     Running   6 (3h59m ago)   20h
+kube-system   pod/kube-apiserver-minikube            1/1     Running   7 (3h59m ago)   20h
+kube-system   pod/kube-controller-manager-minikube   1/1     Running   7 (3h59m ago)   20h
+kube-system   pod/kube-proxy-xbqnz                   1/1     Running   6 (3h59m ago)   20h
+kube-system   pod/kube-scheduler-minikube            1/1     Running   7 (3h59m ago)   20h
+kube-system   pod/storage-provisioner                1/1     Running   8 (3h59m ago)   20h
+
+NAMESPACE     NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
+default       service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP                  20h
+kube-system   service/kube-dns     ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   20h
+
+NAMESPACE     NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+kube-system   daemonset.apps/kube-proxy   1         1         1       1            1           kubernetes.io/os=linux   20h
+
+NAMESPACE     NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
+kube-system   deployment.apps/coredns   1/1     1            1           20h
+
+NAMESPACE     NAME                                 DESIRED   CURRENT   READY   AGE
+kube-system   replicaset.apps/coredns-565d847f94   1         1         1       20h
+
+Namespaces:
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~/Desktop/btech/DEVOPS/kubernetes$ kubectl create -f pod.yml --namespace=myspace
+pod/myapp created
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~/Desktop/btech/DEVOPS/kubernetes$ kubectl get pods -A
+NAMESPACE     NAME                               READY   STATUS              RESTARTS       AGE
+kube-system   coredns-565d847f94-2lzzb           1/1     Running             6 (4h1m ago)   20h
+kube-system   etcd-minikube                      1/1     Running             6 (4h1m ago)   20h
+kube-system   kube-apiserver-minikube            1/1     Running             7 (4h1m ago)   20h
+kube-system   kube-controller-manager-minikube   1/1     Running             7 (4h2m ago)   20h
+kube-system   kube-proxy-xbqnz                   1/1     Running             6 (4h2m ago)   20h
+kube-system   kube-scheduler-minikube            1/1     Running             7 (4h2m ago)   20h
+kube-system   storage-provisioner                1/1     Running             8 (4h1m ago)   20h
+myspace       myapp                              0/1     ContainerCreating   0              7s
+kubectl get pods : 
+will give pod from default namespace
+In order to switch from default to any otehr namespaces : 
+like get pods will give this namespace pods, use switch context command
+kubectl config set-context minikube --namespace=myspace
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~/Desktop/btech/DEVOPS/kubernetes$ kubectl delete pod myapp --namespace=myspace
+pod "myapp" deleted
+
+4,Another application of namespaces: quotas
+Putting resources on namespaces.
+kubectl run --image nginx nginx: pod will be created
+kubectl exec -it pod_name -- bash 
+requesT: 8mi : minimum will aloocate 8MB
+max : limits : 16Mi
+setting limits on resources in namespaces: 
+Like how much cpu, memory, pods cam run in namespaces : using quotsa
+if you apply quota in namespace , then u cannot create pod without mentioning constaraints in pod.yml file
+
+abhishek@abhishek-HP-Laptop-14s-dk0xxx:~/Desktop/btech/DEVOPS/kubernetes$ kubectl get pods -o wide
+NAME    READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+myapp   1/1     Running   0          14m   172.17.0.3   minikube   <none>           <none>
+port on which service listens:port
+port on which pod listens: targetPort
+communicate to pods using service IPs
+Taints
+scheduling : 
+Kube scheduler check on which nodes, checks how many free resources are there.
+mention : nodeNAne in pod.yml file which will scheudle that pod on node
+scheduling: taints and constraint: for node 
+no schedule: It iwll not consider pod for scheduling on this node if some pod is already running opn this it will run as it is.
+Also if some specify NodeNAme in .yml file then also it will be scheduled on this node.
+No execute:It will aslo termintate pod running on it
+No prefer schedule:
+kubectl taint node kubeworker1 app=nginx-server:NoExecute
+toleration:
+means u can extecute that pod on any node having taint set as noexecute
+status:pending if no execute policy on each nodes
+persistent storage
+
+
+kubectl exec -it pod_name -- bash
