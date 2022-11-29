@@ -1,0 +1,65 @@
+shift to new wndow(another container is running)
+sudo docker commit container-id image-name
+sudo docker save image-name -o img.tar
+
+
+sudo docker rum image
+sudo docker pull image
+sudo docker run ubuntu sleep 5(sleep for 5 sec)
+if you want to see content in file  which is there inside container then run command: 
+sudo docker exec container_name cat /etc/hosts
+attach, detach 
+-d : detached mode background 
+sudo docker run -d web_app
+sudo docker attach container_id
+sudo docker stop container_name
+sudo docker ps -a
+sudo docker rm container_name
+sudo docker run redis:4.0 : 4.0 is tag
+docker typically runsi in nonterative mode
+-i for interactive mode
+sudo docker run -it ubuntu bash 
+port mapping:
+sudo docker run -p hostport:dockerport image_name
+sudo docker run -v hostpart:container-path:z image_name 
+:persistent storgae
+use docker inspect container_name, id command to get info 
+sudo docker logs container_name: 
+create Dockerfile:
+COPY HOST to CONTAINER . /opt/soruce-code
+sudo docker build Dockerfile -t image_name
+all lines in dockerfile are layers 
+each layer stores changes from previous layers
+to see history of layers of how image is built
+sudo docker history image
+networks : 
+bridge:default is bridge , none , host
+sudo docker run ubuntu --network=none
+sudo docker run ubuntu --network=host
+Ip address in range: 172.17.0..range
+
+host netowrk : ports will be common
+none: run in netwrk isolated
+sudo docker network ls 
+sudo docker create network :
+storage:
+by default creates at /var/lib/docker
+containers,imags folder :
+Docker layered architecutre
+base layer 
+layer 1
+.
+.
+goes on stores chanegs from previous layer.
+
+at bottom : base layer.
+image layer : read only 
+container layer : rw 
+copy on write
+volume mount: docker cretae volume in /var/lib/docker/volume  
+bind mount: docker -v path on host: path-n cotnainer:z what we did in assignment 
+docker regisrty: where all images resides
+defualt docker registry is dockerhub.io
+docker daemon, docker cli, rest api : when u install docker on linux
+docker cli on differnet laptop
+daemon differnet host
